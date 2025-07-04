@@ -295,7 +295,8 @@ export default function MyListings() {
                 {currentData.map((listing) => (
                 <div
                   key={listing.id}
-                  className="bg-white border-2 border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
+                  className="bg-white border-2 border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+                  onClick={() => router.push(`/listing/${listing.id}`)}
                 >
                   {/* Product Image */}
                   <div className="h-32 bg-gradient-to-br from-blue-100 to-blue-200 relative overflow-hidden">

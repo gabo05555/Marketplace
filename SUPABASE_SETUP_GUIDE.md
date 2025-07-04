@@ -114,26 +114,49 @@ Click **"Add Column"** for each of these columns:
 - **USING Expression**: `auth.uid() = user_id`
 - Click **"Review"** then **"Save Policy"**
 
-## Step 5: Create an Update Trigger (Optional but Recommended)
+## Step 5: Create the Messages Table
 1. In the left sidebar, click on **"SQL Editor"**
 2. Click **"New Query"**
 3. Copy and paste this SQL code:
 
 ```sql
--- Create function to update the updated_at column
-CREATE OR REPLACE FUNCTION update_updated_at_column()
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.updated_at = NOW();
-    RETURN NEW;
-END;
-$$ language 'plpgsql';
+-- Create messages table for seller-buyer communication
+CREATE TABLE IF NOT EXISTS messages (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  listing_id UUID REFERENCES listings(id) ON DELETE CASCADE,
+  seller_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  seller_email VARCHAR(255) NOT NULL,
+  buyer_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  buyer_email VARCHAR(255) NOT NULL,
+  buyer_name VARCHAR(255) NOT NULL,
+  message TEXT NOT NULL,
+  listing_title VARCHAR(255) NOT NULL,
+  listing_price DECIMAL(10, 2) NOT NULL,
+  read_by_seller BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW())
+);
 
--- Create trigger for the listings table
-CREATE TRIGGER update_listings_updated_at
-    BEFORE UPDATE ON listings
-    FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
+-- Add indexes for better performance
+CREATE INDEX IF NOT EXISTS idx_messages_listing_id ON messages(listing_id);
+CREATE INDEX IF NOT EXISTS idx_messages_seller_id ON messages(seller_id);
+CREATE INDEX IF NOT EXISTS idx_messages_buyer_id ON messages(buyer_id);
+CREATE INDEX IF NOT EXISTS idx_messages_created_at ON messages(created_at DESC);
+
+-- Enable Row Level Security
+ALTER TABLE messages ENABLE ROW LEVEL SECURITY;
+
+-- Add RLS policies
+CREATE POLICY "Sellers can view messages for their listings" ON messages
+  FOR SELECT USING (auth.uid() = seller_id);
+
+CREATE POLICY "Buyers can view their own messages" ON messages
+  FOR SELECT USING (auth.uid() = buyer_id);
+
+CREATE POLICY "Authenticated users can send messages" ON messages
+  FOR INSERT WITH CHECK (auth.uid() = buyer_id);
+
+CREATE POLICY "Sellers can update read status" ON messages
+  FOR UPDATE USING (auth.uid() = seller_id);
 ```
 
 4. Click **"Run"** to execute the SQL
@@ -174,13 +197,17 @@ You can find these values in your Supabase dashboard under **"Settings"** → **
 - ✅ Secure data access with RLS policies
 - ✅ Support for images stored as base64 data
 - ✅ Delete functionality with confirmation dialogs
-- ✅ Dedicated "My Listings" page for listing management
+- ✅ Secure messaging system between buyers and sellers
+- ✅ Message history and seller notifications
+- ✅ RLS protection for message privacy
 
 ## Features Available After Setup:
 - **Browse Listings**: View all listings without signing in
 - **Create Listings**: Add new listings with photos, title, description, price, and category
 - **Delete Listings**: Remove your own listings with confirmation
 - **Manage Listings**: Dedicated page to view and manage your listings
-- **Secure Access**: RLS ensures users can only modify their own data
+- **Contact Sellers**: Send messages to sellers directly from listing pages
+- **Message Management**: Sellers can view messages for their listings  
+- **Privacy Protection**: Messages are secured with RLS policies
 
 Once you complete these steps, let me know and I'll fix the add-listing page to work properly with better UI/UX!

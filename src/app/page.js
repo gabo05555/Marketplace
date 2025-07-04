@@ -244,6 +244,19 @@ export default function Marketplace() {
                 </button>
                 <button 
                   className="w-full flex items-center text-left p-2 rounded transition-colors text-gray-600 hover:bg-gray-50"
+                  onClick={() => {
+                    if (user) {
+                      router.push('/messages')
+                    } else {
+                      setShowModal(true)
+                    }
+                  }}
+                >
+                  <span className="mr-2">💬</span>
+                  Your messages
+                </button>
+                <button 
+                  className="w-full flex items-center text-left p-2 rounded transition-colors text-gray-600 hover:bg-gray-50"
                   onClick={() => !user ? setShowModal(true) : null}
                 >
                   <span className="mr-2">❓</span>
@@ -345,7 +358,8 @@ export default function Marketplace() {
                     {currentData.map((listing) => (
                     <div
                       key={listing.id}
-                      className="bg-white border rounded-lg overflow-hidden hover:shadow-md transition-shadow relative"
+                      className="bg-white border rounded-lg overflow-hidden hover:shadow-md transition-shadow relative cursor-pointer"
+                      onClick={() => router.push(`/listing/${listing.id}`)}
                     >
                       {/* Delete Button (only for user's own listings) */}
                       {user && user.id === listing.user_id && (

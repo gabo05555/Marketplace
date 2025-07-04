@@ -6,6 +6,10 @@ A modern, dynamic marketplace web application built with Next.js and Supabase. U
 
 - **🔐 Authentication**: Secure user authentication with Supabase Auth (Magic Link)
 - **🛍️ Dynamic Marketplace**: Users can create, view, and manage their own listings
+- **📄 Listing Detail Pages**: Dedicated pages for each listing with full information
+- **💬 Message Seller System**: Buyers can message sellers with email notifications
+- **📧 Messages Management**: Sellers can view and manage messages from buyers
+- **🔍 Advanced Search**: Fuzzy search with filters, pagination, and suggestions
 - **🏷️ Category Filtering**: Browse listings by category (Electronics, Vehicles, etc.)
 - **📱 Responsive Design**: Works perfectly on desktop and mobile devices
 - **👥 Guest Browsing**: Users can browse listings without signing in
@@ -69,19 +73,34 @@ Visit [http://localhost:3000](http://localhost:3000) to see the application.
 
 ## 🗄️ Database Schema
 
-The application uses a single `listings` table with the following structure:
+The application uses these main tables:
 
-- `id` (UUID) - Primary key
-- `title` (TEXT) - Listing title
+### Listings Table
+- `id` (BIGSERIAL) - Primary key
+- `title` (VARCHAR) - Listing title
 - `description` (TEXT) - Listing description
 - `price` (DECIMAL) - Item price
-- `category` (TEXT) - Category name
-- `location` (TEXT) - Location string
+- `email` (VARCHAR) - Seller email
+- `category` (VARCHAR) - Category name
+- `location` (VARCHAR) - Location string
 - `image_url` (TEXT) - Image URL or base64 data
 - `user_id` (UUID) - Owner's user ID
-- `user_email` (TEXT) - Owner's email
 - `created_at` (TIMESTAMP) - Creation timestamp
 - `updated_at` (TIMESTAMP) - Last update timestamp
+
+### Messages Table
+- `id` (BIGSERIAL) - Primary key
+- `listing_id` (BIGINT) - Reference to listing
+- `seller_id` (UUID) - Seller's user ID
+- `seller_email` (VARCHAR) - Seller's email
+- `buyer_id` (UUID) - Buyer's user ID
+- `buyer_email` (VARCHAR) - Buyer's email
+- `buyer_name` (VARCHAR) - Buyer's name
+- `message` (TEXT) - Message content
+- `listing_title` (VARCHAR) - Listing title for reference
+- `listing_price` (DECIMAL) - Listing price for reference
+- `read_by_seller` (BOOLEAN) - Read status
+- `created_at` (TIMESTAMP) - Creation timestamp
 
 ## 🎯 Usage
 
@@ -97,6 +116,9 @@ The application uses a single `listings` table with the following structure:
 - Upload photos
 - Manage their own listings
 - Edit/delete their listings
+- Send messages to sellers
+- View and manage received messages
+- Get email notifications for new messages
 
 ### Creating a Listing
 1. Click "Sign In" and authenticate with your email
@@ -107,6 +129,11 @@ The application uses a single `listings` table with the following structure:
    - Location
    - Upload a photo (optional)
 4. Click "Create Listing"
+
+### Messaging System
+1. **As a Buyer**: Click on any listing to view details, then click "Message Seller"
+2. **As a Seller**: Check "Your messages" in the sidebar to view and respond to inquiries
+3. **Email Notifications**: Sellers receive email notifications when buyers send messages
 
 ## 🛠️ Tech Stack
 
