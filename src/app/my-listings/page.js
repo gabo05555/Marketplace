@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import supabase from '@/lib/supabaseClient'
 import SearchFilter from '@/components/SearchFilter'
 import SearchStats from '@/components/SearchStats'
@@ -258,7 +259,7 @@ export default function MyListings() {
               <div className="text-gray-400 text-6xl mb-4">📝</div>
               <h3 className="text-lg font-medium text-gray-900 mb-2">No listings yet</h3>
               <p className="text-gray-500 mb-6">
-                You haven't created any listings. Start selling by creating your first listing!
+                You haven&apos;t created any listings. Start selling by creating your first listing!
               </p>
               <button
                 onClick={() => router.push('/add-listing')}
@@ -301,9 +302,10 @@ export default function MyListings() {
                   {/* Product Image */}
                   <div className="h-32 bg-gradient-to-br from-blue-100 to-blue-200 relative overflow-hidden">
                     {listing.image_url ? (
-                      <img
+                      <Image
                         src={listing.image_url}
                         alt={listing.title}
+                        fill
                         className="w-full h-full object-cover"
                       />
                     ) : (

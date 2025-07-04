@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import supabase from '@/lib/supabaseClient'
 
 export default function AddListing() {
@@ -361,9 +362,11 @@ export default function AddListing() {
                 >
                   {imagePreview ? (
                     <div className="mb-4">
-                      <img
+                      <Image
                         src={imagePreview}
                         alt="Preview"
+                        width={128}
+                        height={128}
                         className="w-32 h-32 object-cover rounded-lg border border-gray-200/50 shadow-sm"
                       />
                     </div>

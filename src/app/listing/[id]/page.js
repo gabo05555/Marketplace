@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useParams } from 'next/navigation'
+import Image from 'next/image'
 import supabase from '@/lib/supabaseClient'
 
 export default function ListingDetail() {
@@ -200,9 +201,10 @@ export default function ListingDetail() {
             <div className="bg-white rounded-lg shadow-sm overflow-hidden">
               <div className="aspect-square bg-gradient-to-br from-blue-100 to-blue-200 relative">
                 {listing.image_url ? (
-                  <img
+                  <Image
                     src={listing.image_url}
                     alt={listing.title}
+                    fill
                     className="w-full h-full object-cover"
                   />
                 ) : (
@@ -391,7 +393,7 @@ export default function ListingDetail() {
               <ul className="text-sm text-yellow-700 space-y-1">
                 <li>• Meet in a public place for transactions</li>
                 <li>• Inspect items carefully before purchasing</li>
-                <li>• Don't send money before seeing the item</li>
+                <li>• Don&apos;t send money before seeing the item</li>
                 <li>• Trust your instincts about buyers/sellers</li>
               </ul>
             </div>

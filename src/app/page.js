@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import supabase from '@/lib/supabaseClient'
 import SearchFilter from '@/components/SearchFilter'
 import SearchStats from '@/components/SearchStats'
@@ -473,9 +474,10 @@ export default function Marketplace() {
                       <div className="h-40 bg-gradient-to-br from-blue-100 to-purple-100 relative overflow-hidden 
                                     cursor-pointer group-hover:shadow-inner">
                         {listing.image_url ? (
-                          <img
+                          <Image
                             src={listing.image_url}
                             alt={listing.title}
+                            fill
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           />
                         ) : (

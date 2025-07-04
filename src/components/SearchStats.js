@@ -41,7 +41,7 @@ export default function SearchStats({ stats, searchQuery, selectedCategory, load
           <div className="flex items-center space-x-1">
             <span>Searching for:</span>
             <span className="font-medium text-gray-700 bg-gray-100 px-2 py-1 rounded">
-              "{searchQuery}"
+              &quot;{searchQuery}&quot;
             </span>
           </div>
         )}
