@@ -367,6 +367,7 @@ export default function AddListing() {
                         alt="Preview"
                         width={128}
                         height={128}
+                        quality={95}
                         className="w-32 h-32 object-cover rounded-lg border border-gray-200/50 shadow-sm"
                       />
                     </div>

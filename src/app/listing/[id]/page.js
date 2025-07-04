@@ -17,6 +17,8 @@ export default function ListingDetail() {
   const [buyerEmail, setBuyerEmail] = useState('')
   const [sendingMessage, setSendingMessage] = useState(false)
   const [messageSuccess, setMessageSuccess] = useState(false)
+  const [showImageModal, setShowImageModal] = useState(false)
+  const [imageError, setImageError] = useState(false)
 
   useEffect(() => {
     const getSessionAndListing = async () => {
@@ -199,14 +201,56 @@ export default function ListingDetail() {
           {/* Image Section */}
           <div>
             <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-              <div className="aspect-square bg-gradient-to-br from-blue-100 to-blue-200 relative">
+              <div 
+                className="aspect-square bg-gradient-to-br from-blue-100 to-blue-200 relative group cursor-pointer"
+                onClick={() => listing.image_url && setShowImageModal(true)}
+              >
                 {listing.image_url ? (
-                  <Image
-                    src={listing.image_url}
-                    alt={listing.title}
-                    fill
-                    className="w-full h-full object-cover"
-                  />
+                  <>
+                    {!imageError ? (
+                      <Image
+                        src={listing.image_url}
+                        alt={listing.title}
+                        fill
+                        quality={100}
+                        priority
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 60vw"
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        style={{ objectFit: 'cover' }}
+                        onError={(e) => {
+                          console.log('Next.js Image failed, falling back to native img:', listing.image_url);
+                          setImageError(true);
+                        }}
+                        onLoad={(e) => {
+                          console.log('Next.js Image loaded successfully:', listing.image_url);
+                        }}
+                      />
+                    ) : (
+                      <img
+                        src={listing.image_url}
+                        alt={listing.title}
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        style={{ objectFit: 'cover' }}
+                        onError={(e) => {
+                          console.log('Native img also failed:', listing.image_url);
+                          e.currentTarget.style.display = 'none';
+                        }}
+                        onLoad={(e) => {
+                          console.log('Native img loaded successfully:', listing.image_url);
+                        }}
+                      />
+                    )}
+                    {/* Debug info - remove in production */}
+                    {process.env.NODE_ENV === 'development' && (
+                      <div className="absolute bottom-2 left-2 bg-black/80 text-white text-xs px-2 py-1 rounded max-w-xs overflow-hidden">
+                        Image URL: {listing.image_url}
+                      </div>
+                    )}
+                    {/* Zoom indicator */}
+                    <div className="absolute top-4 right-4 bg-black/50 text-white px-2 py-1 rounded-lg text-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                      🔍 Click to zoom
+                    </div>
+                  </>
                 ) : (
                   <>
                     <div className="absolute inset-0 bg-gradient-to-br from-blue-200 to-blue-300 opacity-50"></div>
@@ -400,6 +444,39 @@ export default function ListingDetail() {
           </div>
         </div>
       </div>
+
+      {/* Image Modal */}
+      {showImageModal && listing.image_url && (
+        <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4">
+          <div className="relative max-w-4xl max-h-full w-full h-full flex items-center justify-center">
+            <button
+              onClick={() => setShowImageModal(false)}
+              className="absolute top-4 right-4 bg-white text-black rounded-full w-10 h-10 flex items-center justify-center hover:bg-gray-200 transition-colors z-10"
+            >
+              ✕
+            </button>
+            <Image
+              src={listing.image_url}
+              alt={listing.title}
+              fill
+              quality={100}
+              sizes="100vw"
+              className="object-contain"
+              style={{ objectFit: 'contain' }}
+              onError={(e) => {
+                console.log('Modal image failed to load, trying direct approach:', listing.image_url);
+                // Create a fallback img element
+                const img = document.createElement('img');
+                img.src = listing.image_url;
+                img.alt = listing.title;
+                img.className = 'max-w-full max-h-full object-contain';
+                img.style.objectFit = 'contain';
+                e.currentTarget.parentNode.replaceChild(img, e.currentTarget);
+              }}
+            />
+          </div>
+        </div>
+      )}
     </div>
   )
 }
