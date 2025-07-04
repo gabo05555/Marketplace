@@ -342,12 +342,17 @@ export default function Marketplace() {
               {/* Enhanced Search Filter */}
               <div className="mb-8">
                 <SearchFilter
-                  onSearch={setSearchQuery}
-                  onFiltersChange={setFilters}
-                  initialQuery={searchQuery}
-                  showAdvancedFilters={true}
-                  categories={categories}
-                  listings={categoryFilteredListings}
+                  searchTerm={searchQuery}
+                  onSearchChange={setSearchQuery}
+                  filters={filters}
+                  onFilterChange={(filterType, value) => {
+                    setFilters(prev => ({
+                      ...prev,
+                      [filterType]: value
+                    }));
+                  }}
+                  suggestions={[]}
+                  onSuggestionClick={setSearchQuery}
                 />
               </div>
 
