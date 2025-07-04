@@ -2,6 +2,10 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import supabase from '@/lib/supabaseClient'
+import SearchFilter from '@/components/SearchFilter'
+import SearchStats from '@/components/SearchStats'
+import Pagination from '@/components/Pagination'
+import { useEnhancedSearch, usePagination } from '@/hooks/useEnhancedSearch'
 
 export default function Marketplace() {
   const router = useRouter()
@@ -13,6 +17,34 @@ export default function Marketplace() {
   const [listings, setListings] = useState([])
   const [loading, setLoading] = useState(true)
   const [deleteLoading, setDeleteLoading] = useState(null)
+
+  // Enhanced search functionality - filter by category first
+  const categoryFilteredListings = listings.filter(listing => 
+    selectedCategory === 'All' || listing.category === selectedCategory
+  )
+  
+  const searchFields = ['title', 'description', 'location', 'category']
+  const {
+    searchQuery,
+    setSearchQuery,
+    filters,
+    setFilters,
+    filteredData,
+    suggestions,
+    stats
+  } = useEnhancedSearch(categoryFilteredListings, searchFields)
+
+  // Pagination
+  const {
+    currentPage,
+    totalPages,
+    currentData,
+    goToPage,
+    hasNext,
+    hasPrevious,
+    startIndex,
+    endIndex
+  } = usePagination(filteredData, 20)
 
   const categories = [
     { name: 'All', icon: '🏪' },
@@ -55,10 +87,11 @@ export default function Marketplace() {
     }
   }
 
-  // Filter listings based on selected category
-  const filteredListings = selectedCategory === 'All' 
-    ? listings 
-    : listings.filter(listing => listing.category === selectedCategory)
+  // Update search data when category changes
+  useEffect(() => {
+    // Reset search when category changes
+    setSearchQuery('')
+  }, [selectedCategory, setSearchQuery])
 
   // Delete listing function
   const handleDeleteListing = async (listingId) => {
@@ -244,40 +277,72 @@ export default function Marketplace() {
           {/* Main Content */}
           <div className="flex-1">
             <div className="bg-white rounded-lg shadow-sm p-6">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">
-                  {selectedCategory === 'All' ? 'All Listings' : `${selectedCategory} Listings`}
-                </h2>
-                <span className="text-gray-500">
-                  {filteredListings.length} {filteredListings.length === 1 ? 'item' : 'items'}
-                </span>
-              </div>
+              {/* Search Filter */}
+              <SearchFilter
+                onSearch={setSearchQuery}
+                onFiltersChange={setFilters}
+                initialQuery={searchQuery}
+                showAdvancedFilters={true}
+                categories={categories}
+                listings={categoryFilteredListings}
+              />
+
+              {/* Search Stats */}
+              <SearchStats
+                stats={stats}
+                searchQuery={searchQuery}
+                selectedCategory={selectedCategory}
+                loading={loading}
+              />
               
               {loading ? (
                 <div className="flex justify-center items-center py-12">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
                 </div>
-              ) : filteredListings.length === 0 ? (
+              ) : currentData.length === 0 ? (
                 <div className="text-center py-12">
-                  <div className="text-gray-400 text-6xl mb-4">🛒</div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No listings found</h3>
+                  <div className="text-gray-400 text-6xl mb-4">
+                    {searchQuery ? '�' : '�🛒'}
+                  </div>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                    {searchQuery ? 'No search results found' : 'No listings found'}
+                  </h3>
                   <p className="text-gray-500 mb-6">
-                    {selectedCategory === 'All' 
-                      ? 'Be the first to create a listing!' 
-                      : `No items found in ${selectedCategory}.`}
+                    {searchQuery 
+                      ? `No listings match your search criteria. Try different keywords or adjust your filters.`
+                      : selectedCategory === 'All' 
+                        ? 'Be the first to create a listing!' 
+                        : `No items found in ${selectedCategory}.`}
                   </p>
+                  {(searchQuery || stats.hasActiveFilters) ? (
+                    <button
+                      onClick={() => {
+                        setSearchQuery('')
+                        setFilters({
+                          sortBy: 'newest',
+                          priceRange: { min: '', max: '' },
+                          selectedCategories: [],
+                          dateRange: { from: '', to: '' }
+                        })
+                      }}
+                      className="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors font-medium mr-4"
+                    >
+                      Clear Search & Filters
+                    </button>
+                  ) : null}
                   {user && (
                     <button
                       onClick={() => router.push('/add-listing')}
                       className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium"
                     >
-                      Create First Listing
+                      {searchQuery ? 'Create New Listing' : 'Create First Listing'}
                     </button>
                   )}
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                  {filteredListings.map((listing) => (
+                <>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                    {currentData.map((listing) => (
                     <div
                       key={listing.id}
                       className="bg-white border rounded-lg overflow-hidden hover:shadow-md transition-shadow relative"
@@ -340,11 +405,29 @@ export default function Marketplace() {
                           <div className="text-xs text-blue-600 font-medium mt-2">
                             Your listing
                           </div>
-                        )}
+                        )}                          {/* Search match highlights */}
+                          {listing.searchMatches && (
+                            <div className="text-xs text-green-600 mt-2">
+                              Match: {listing.searchMatches.map(match => match.key).join(', ')}
+                            </div>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+
+                  {/* Pagination */}
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={goToPage}
+                    hasNext={hasNext}
+                    hasPrevious={hasPrevious}
+                    startIndex={startIndex}
+                    endIndex={endIndex}
+                    totalItems={filteredData.length}
+                  />
+                </>
               )}
             </div>
           </div>

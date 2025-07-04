@@ -2,6 +2,10 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import supabase from '@/lib/supabaseClient'
+import SearchFilter from '@/components/SearchFilter'
+import SearchStats from '@/components/SearchStats'
+import Pagination from '@/components/Pagination'
+import { useEnhancedSearch, usePagination } from '@/hooks/useEnhancedSearch'
 
 export default function MyListings() {
   const router = useRouter()
@@ -10,6 +14,53 @@ export default function MyListings() {
   const [listings, setListings] = useState([])
   const [deleteLoading, setDeleteLoading] = useState(null)
   const [message, setMessage] = useState('')
+
+  // Enhanced search functionality
+  const searchFields = ['title', 'description', 'location', 'category']
+  const {
+    searchQuery,
+    setSearchQuery,
+    filters,
+    setFilters,
+    filteredData,
+    suggestions,
+    stats
+  } = useEnhancedSearch(listings, searchFields)
+
+  // Pagination
+  const {
+    currentPage,
+    totalPages,
+    currentData,
+    goToPage,
+    hasNext,
+    hasPrevious,
+    startIndex,
+    endIndex
+  } = usePagination(filteredData, 10) // Fewer items per page for user's own listings
+
+  const categories = [
+    { name: 'All', icon: '🏪' },
+    { name: 'Vehicles', icon: '🚗' },
+    { name: 'Property Rentals', icon: '🏠' },
+    { name: 'Apparel', icon: '👕' },
+    { name: 'Classifieds', icon: '📋' },
+    { name: 'Electronics', icon: '📱' },
+    { name: 'Entertainment', icon: '🎬' },
+    { name: 'Family', icon: '👨‍👩‍👧‍👦' },
+    { name: 'Free Stuff', icon: '🆓' },
+    { name: 'Garden & Outdoor', icon: '🌱' },
+    { name: 'Hobbies', icon: '🎨' },
+    { name: 'Home Goods', icon: '🏡' },
+    { name: 'Home Improvement', icon: '🔨' },
+    { name: 'Home Sales', icon: '🏘️' },
+    { name: 'Musical Instruments', icon: '🎸' },
+    { name: 'Office Supplies', icon: '📝' },
+    { name: 'Pet Supplies', icon: '🐕' },
+    { name: 'Sporting Goods', icon: '⚽' },
+    { name: 'Toys & Games', icon: '🎮' },
+    { name: 'Buy and sell groups', icon: '🛒' }
+  ]
 
   useEffect(() => {
     const getSession = async () => {
@@ -168,15 +219,39 @@ export default function MyListings() {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-white rounded-lg shadow-sm border p-8">
-          <div className="flex justify-between items-center mb-8">
+          <div className="flex justify-between items-center mb-6">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">My Listings</h1>
               <p className="text-gray-600 text-lg">Manage your marketplace listings</p>
             </div>
             <div className="text-gray-500">
-              {listings.length} {listings.length === 1 ? 'listing' : 'listings'}
+              {listings.length} total, {filteredData.length} {filteredData.length === 1 ? 'shown' : 'shown'}
             </div>
           </div>
+
+          {/* Search Filter */}
+          {listings.length > 0 && (
+            <div className="mb-6">
+              <SearchFilter
+                onSearch={setSearchQuery}
+                onFiltersChange={setFilters}
+                initialQuery={searchQuery}
+                showAdvancedFilters={true}
+                categories={categories}
+                listings={listings}
+              />
+            </div>
+          )}
+
+          {/* Search Stats */}
+          {listings.length > 0 && (
+            <SearchStats
+              stats={stats}
+              searchQuery={searchQuery}
+              selectedCategory="All"
+              loading={false}
+            />
+          )}
           
           {listings.length === 0 ? (
             <div className="text-center py-12">
@@ -192,9 +267,32 @@ export default function MyListings() {
                 Create Your First Listing
               </button>
             </div>
+          ) : currentData.length === 0 ? (
+            <div className="text-center py-12">
+              <div className="text-gray-400 text-6xl mb-4">🔍</div>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No matching listings</h3>
+              <p className="text-gray-500 mb-6">
+                No listings match your search criteria. Try different keywords or adjust your filters.
+              </p>
+              <button
+                onClick={() => {
+                  setSearchQuery('')
+                  setFilters({
+                    sortBy: 'newest',
+                    priceRange: { min: '', max: '' },
+                    selectedCategories: [],
+                    dateRange: { from: '', to: '' }
+                  })
+                }}
+                className="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors font-medium"
+              >
+                Clear Search & Filters
+              </button>
+            </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {listings.map((listing) => (
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {currentData.map((listing) => (
                 <div
                   key={listing.id}
                   className="bg-white border-2 border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
@@ -265,7 +363,20 @@ export default function MyListings() {
                   </div>
                 </div>
               ))}
-            </div>
+              </div>
+
+              {/* Pagination */}
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={goToPage}
+                hasNext={hasNext}
+                hasPrevious={hasPrevious}
+                startIndex={startIndex}
+                endIndex={endIndex}
+                totalItems={filteredData.length}
+              />
+            </>
           )}
         </div>
       </div>
