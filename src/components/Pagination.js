@@ -68,10 +68,13 @@ export default function Pagination({
   if (totalPages <= 1) return null
 
   return (
-    <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-8 p-4 bg-white border-t border-gray-200">
+    <div className="flex flex-col sm:flex-row justify-between items-center gap-6 mt-8 p-6 
+                  bg-gradient-to-r from-white to-gray-50 rounded-2xl shadow-soft border border-gray-200">
       {/* Results Info */}
-      <div className="text-sm text-gray-600">
-        Showing {startIndex} to {endIndex} of {totalItems} results
+      <div className="text-sm text-gray-600 font-medium">
+        Showing <span className="font-semibold text-gray-900">{startIndex}</span> to{' '}
+        <span className="font-semibold text-gray-900">{endIndex}</span> of{' '}
+        <span className="font-semibold text-gray-900">{totalItems}</span> results
       </div>
 
       {/* Pagination Controls */}
@@ -80,9 +83,15 @@ export default function Pagination({
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={!hasPrevious}
-          className="px-3 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="px-4 py-2 text-sm font-medium border border-gray-200/50 rounded-xl 
+                   hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 
+                   disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 
+                   hover:shadow-md hover:border-gray-300/60 flex items-center space-x-2"
         >
-          Previous
+          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          <span>Previous</span>
         </button>
 
         {/* Page Numbers */}
@@ -92,12 +101,12 @@ export default function Pagination({
               key={index}
               onClick={() => typeof page === 'number' && onPageChange(page)}
               disabled={page === '...'}
-              className={`px-3 py-2 text-sm border rounded-lg transition-colors ${
+              className={`px-4 py-2 text-sm font-medium border rounded-xl transition-all duration-200 ${
                 page === currentPage
-                  ? 'bg-blue-600 text-white border-blue-600'
+                  ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white border-blue-600 shadow-lg transform scale-105'
                   : page === '...'
-                  ? 'border-transparent cursor-default'
-                  : 'border-gray-300 hover:bg-gray-50'
+                  ? 'border-transparent cursor-default text-gray-400'
+                  : 'border-gray-200/50 hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 hover:border-gray-300/60 hover:shadow-md'
               }`}
             >
               {page}
@@ -109,9 +118,15 @@ export default function Pagination({
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={!hasNext}
-          className="px-3 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="px-4 py-2 text-sm font-medium border border-gray-200/50 rounded-xl 
+                   hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 
+                   disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 
+                   hover:shadow-md hover:border-gray-300/60 flex items-center space-x-2"
         >
-          Next
+          <span>Next</span>
+          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
         </button>
       </div>
 

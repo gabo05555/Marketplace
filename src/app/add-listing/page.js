@@ -260,7 +260,7 @@ export default function AddListing() {
                 id="title"
                 name="title"
                 required
-                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-gray-900 placeholder-gray-500 text-base"
+                className="w-full px-4 py-3 border border-gray-300/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-gray-900 placeholder-gray-500 text-base"
                 placeholder="What are you selling?"
                 value={formData.title}
                 onChange={handleInputChange}
@@ -277,7 +277,7 @@ export default function AddListing() {
                 name="description"
                 required
                 rows={4}
-                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-gray-900 placeholder-gray-500 text-base resize-vertical"
+                className="w-full px-4 py-3 border border-gray-300/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-gray-900 placeholder-gray-500 text-base resize-vertical"
                 placeholder="Describe your item in detail..."
                 value={formData.description}
                 onChange={handleInputChange}
@@ -297,7 +297,7 @@ export default function AddListing() {
                   required
                   min="0"
                   step="0.01"
-                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-gray-900 placeholder-gray-500 text-base"
+                  className="w-full px-4 py-3 border border-gray-300/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-gray-900 placeholder-gray-500 text-base"
                   placeholder="0.00"
                   value={formData.price}
                   onChange={handleInputChange}
@@ -312,7 +312,7 @@ export default function AddListing() {
                   id="category"
                   name="category"
                   required
-                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-gray-900 text-base"
+                  className="w-full px-4 py-3 border border-gray-300/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-gray-900 text-base"
                   value={formData.category}
                   onChange={handleInputChange}
                 >
@@ -335,7 +335,7 @@ export default function AddListing() {
                 id="location"
                 name="location"
                 required
-                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-gray-900 placeholder-gray-500 text-base"
+                className="w-full px-4 py-3 border border-gray-300/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-gray-900 placeholder-gray-500 text-base"
                 placeholder="City, State"
                 value={formData.location}
                 onChange={handleInputChange}
@@ -347,7 +347,7 @@ export default function AddListing() {
               <label htmlFor="image" className="block text-sm font-semibold text-gray-800 mb-2">
                 Photo (Optional)
               </label>
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
+              <div className="border border-dashed border-gray-300/50 rounded-lg p-6 text-center hover:border-blue-400/60 transition-colors">
                 <input
                   type="file"
                   id="image"
@@ -364,11 +364,11 @@ export default function AddListing() {
                       <img
                         src={imagePreview}
                         alt="Preview"
-                        className="w-32 h-32 object-cover rounded-lg border-2 border-gray-200 shadow-sm"
+                        className="w-32 h-32 object-cover rounded-lg border border-gray-200/50 shadow-sm"
                       />
                     </div>
                   ) : (
-                    <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center mb-4 border-2 border-gray-200">
+                    <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center mb-4 border border-gray-200/50">
                       <span className="text-gray-400 text-2xl">📷</span>
                     </div>
                   )}
@@ -398,7 +398,7 @@ export default function AddListing() {
               <button
                 type="button"
                 onClick={() => router.push('/')}
-                className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium text-base"
+                className="px-6 py-3 border border-gray-300/50 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium text-base"
               >
                 Cancel
               </button>

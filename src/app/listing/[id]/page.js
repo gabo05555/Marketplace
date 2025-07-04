@@ -274,7 +274,7 @@ export default function ListingDetail() {
                 ) : (
                   <div className="space-y-4">
                     {/* Message Form */}
-                    <div className="bg-white border-2 border-gray-200 rounded-lg p-6">
+                    <div className="bg-white border border-gray-200/50 rounded-lg p-6">
                       <div className="flex items-center justify-between mb-4">
                         <h3 className="text-lg font-semibold text-gray-900">Contact Seller</h3>
                         <div className="flex items-center space-x-2 text-sm text-gray-600">
@@ -306,7 +306,7 @@ export default function ListingDetail() {
                                 type="text"
                                 value={buyerName}
                                 onChange={(e) => setBuyerName(e.target.value)}
-                                className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-gray-900 placeholder-gray-500"
+                                className="w-full px-3 py-2 border border-gray-300/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-gray-900 placeholder-gray-500"
                                 placeholder="Enter your name"
                               />
                             </div>
@@ -318,7 +318,7 @@ export default function ListingDetail() {
                                 type="email"
                                 value={buyerEmail}
                                 onChange={(e) => setBuyerEmail(e.target.value)}
-                                className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-gray-900 placeholder-gray-500"
+                                className="w-full px-3 py-2 border border-gray-300/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-gray-900 placeholder-gray-500"
                                 placeholder="Enter your email"
                               />
                             </div>
@@ -332,7 +332,7 @@ export default function ListingDetail() {
                               value={message}
                               onChange={(e) => setMessage(e.target.value)}
                               rows={4}
-                              className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none text-gray-900 placeholder-gray-500"
+                              className="w-full px-3 py-2 border border-gray-300/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none text-gray-900 placeholder-gray-500"
                               placeholder={`Hi! I'm interested in your "${listing.title}" listing. Is it still available?`}
                             />
                             <div className="flex justify-between mt-1">
