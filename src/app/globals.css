@@ -483,4 +483,33 @@ body {
   opacity: 0.7;
 }
 
+/* === Image Quality Improvements === */
+.image-crisp {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+  image-rendering: optimizeQuality;
+}
+
+.image-smooth {
+  image-rendering: auto;
+  image-rendering: smooth;
+  image-rendering: high-quality;
+  image-rendering: optimizeQuality;
+}
+
+/* Modern image container */
+.image-container {
+  image-rendering: -webkit-optimize-contrast;
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -ms-transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+}
+
+/* === End Image Quality Improvements === */
+
 /* === End Search Filter Component === */

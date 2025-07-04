@@ -202,7 +202,7 @@ export default function ListingDetail() {
           <div>
             <div className="bg-white rounded-lg shadow-sm overflow-hidden">
               <div 
-                className="aspect-square bg-gradient-to-br from-blue-100 to-blue-200 relative group cursor-pointer"
+                className="aspect-square bg-gradient-to-br from-blue-100 to-blue-200 relative group cursor-pointer image-container"
                 onClick={() => listing.image_url && setShowImageModal(true)}
               >
                 {listing.image_url ? (
@@ -215,7 +215,7 @@ export default function ListingDetail() {
                         quality={100}
                         priority
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 60vw"
-                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 image-smooth"
                         style={{ objectFit: 'cover' }}
                         onError={(e) => {
                           console.log('Next.js Image failed, falling back to native img:', listing.image_url);
@@ -226,17 +226,19 @@ export default function ListingDetail() {
                         }}
                       />
                     ) : (
-                      <img
+                      <Image
                         src={listing.image_url}
                         alt={listing.title}
-                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                        style={{ objectFit: 'cover' }}
+                        fill
+                        quality={100}
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 image-smooth"
+                        unoptimized
                         onError={(e) => {
-                          console.log('Native img also failed:', listing.image_url);
+                          console.log('Fallback Image also failed:', listing.image_url);
                           e.currentTarget.style.display = 'none';
                         }}
                         onLoad={(e) => {
-                          console.log('Native img loaded successfully:', listing.image_url);
+                          console.log('Fallback Image loaded successfully:', listing.image_url);
                         }}
                       />
                     )}
@@ -461,7 +463,7 @@ export default function ListingDetail() {
               fill
               quality={100}
               sizes="100vw"
-              className="object-contain"
+              className="object-contain image-smooth"
               style={{ objectFit: 'contain' }}
               onError={(e) => {
                 console.log('Modal image failed to load, trying direct approach:', listing.image_url);

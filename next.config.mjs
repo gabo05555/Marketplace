@@ -1,12 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  eslint: {
-    // Warning: This allows production builds to successfully complete even if
-    // your project has ESLint errors.
-    ignoreDuringBuilds: true,
-  },
   images: {
     remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'ersjtiipxnsczzpvytqq.supabase.co',
+      },
       {
         protocol: 'https',
         hostname: '*.supabase.co',
@@ -20,12 +19,12 @@ const nextConfig = {
         hostname: 'supabase.com',
       },
       {
-        protocol: 'https',
-        hostname: '**',
-      },
-      {
         protocol: 'http',
         hostname: 'localhost',
+      },
+      {
+        protocol: 'https',
+        hostname: '**',
       },
     ],
     formats: ['image/webp', 'image/avif'],
@@ -34,7 +33,6 @@ const nextConfig = {
     minimumCacheTTL: 60,
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
-    loader: 'default',
   },
 };
 
