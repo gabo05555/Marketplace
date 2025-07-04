@@ -225,37 +225,37 @@ export default function Marketplace() {
       {/* Login Modal */}
       {showModal && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4"
           onClick={(e) => {
             if (e.target === e.currentTarget) {
               setShowModal(false)
             }
           }}
         >
-          <div className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md transform transition-all duration-300 ease-out">
+          <div className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md transform transition-all duration-300 ease-out border-2 border-gray-200">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">Welcome to Marketplace</h2>
+              <h2 className="text-3xl font-bold text-gray-900">Welcome to Marketplace</h2>
               <button
                 onClick={() => setShowModal(false)}
-                className="text-gray-400 hover:text-gray-600 text-2xl font-light w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
+                className="text-gray-600 hover:text-gray-800 text-3xl font-normal w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
               >
                 ×
               </button>
             </div>
             
-            <p className="text-gray-600 mb-6">Sign in to browse and interact with listings</p>
+            <p className="text-gray-800 mb-6 text-lg font-semibold">Sign in to browse and interact with listings</p>
             
             <div className="space-y-4">
               <input
                 type="email"
-                className="border border-gray-300 p-4 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                className="border-2 border-gray-300 p-4 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-gray-900 placeholder-gray-500 text-lg"
                 placeholder="Enter your email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
               
               <button
-                className="bg-blue-600 text-white px-6 py-4 w-full rounded-lg hover:bg-blue-700 transition-colors font-medium text-lg"
+                className="bg-blue-600 text-white px-6 py-4 w-full rounded-lg hover:bg-blue-700 transition-colors font-bold text-lg shadow-lg"
                 onClick={handleLogin}
               >
                 Send Magic Link
@@ -263,15 +263,15 @@ export default function Marketplace() {
             </div>
             
             {message && (
-              <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
-                <p className="text-sm text-green-700">{message}</p>
+              <div className="mt-4 p-4 bg-green-50 border-2 border-green-200 rounded-lg">
+                <p className="text-base text-green-800 font-semibold">{message}</p>
               </div>
             )}
             
             <div className="mt-6 text-center">
               <button
                 onClick={() => setShowModal(false)}
-                className="text-gray-500 hover:text-gray-700 text-sm underline transition-colors"
+                className="text-gray-700 hover:text-gray-900 text-base underline transition-colors font-semibold"
               >
                 Browse as guest (limited features)
               </button>
