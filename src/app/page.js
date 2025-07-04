@@ -7,6 +7,47 @@ export default function Marketplace() {
   const [email, setEmail] = useState('')
   const [message, setMessage] = useState('')
   const [showModal, setShowModal] = useState(false)
+  const [selectedCategory, setSelectedCategory] = useState('Electronics')
+
+  const categories = [
+    { name: 'Vehicles', icon: '🚗' },
+    { name: 'Property Rentals', icon: '🏠' },
+    { name: 'Apparel', icon: '👕' },
+    { name: 'Classifieds', icon: '📋' },
+    { name: 'Electronics', icon: '📱' },
+    { name: 'Entertainment', icon: '🎬' },
+    { name: 'Family', icon: '👨‍👩‍👧‍👦' },
+    { name: 'Free Stuff', icon: '🆓' },
+    { name: 'Garden & Outdoor', icon: '🌱' },
+    { name: 'Hobbies', icon: '🎨' },
+    { name: 'Home Goods', icon: '🏡' },
+    { name: 'Home Improvement', icon: '🔨' },
+    { name: 'Home Sales', icon: '🏘️' },
+    { name: 'Musical Instruments', icon: '🎸' },
+    { name: 'Office Supplies', icon: '📝' },
+    { name: 'Pet Supplies', icon: '🐕' },
+    { name: 'Sporting Goods', icon: '⚽' },
+    { name: 'Toys & Games', icon: '🎮' },
+    { name: 'Buy and sell groups', icon: '🛒' }
+  ]
+
+  const mockProducts = [
+    { id: 1, price: '$99', description: 'Lorem ipsum dolor sit Palo Alto, CA', location: 'Palo Alto, CA' },
+    { id: 2, price: '$2,300', description: 'Lorem ipsum dolor sit Palo Alto, CA', location: 'Palo Alto, CA' },
+    { id: 3, price: '$2,300', description: 'Lorem ipsum dolor sit Palo Alto, CA', location: 'Palo Alto, CA' },
+    { id: 4, price: '$2,300', description: 'Lorem ipsum dolor sit Palo Alto, CA', location: 'Palo Alto, CA' },
+    { id: 5, price: '$2,300', description: 'Lorem ipsum dolor sit Palo Alto, CA', location: 'Palo Alto, CA' },
+    { id: 6, price: '$2,300', description: 'Lorem ipsum dolor sit Palo Alto, CA', location: 'Palo Alto, CA' },
+    { id: 7, price: '$2,300', description: 'Lorem ipsum dolor sit Palo Alto, CA', location: 'Palo Alto, CA' },
+    { id: 8, price: '$2,300', description: 'Lorem ipsum dolor sit Palo Alto, CA', location: 'Palo Alto, CA' },
+    { id: 9, price: '$2,300', description: 'Lorem ipsum dolor sit Palo Alto, CA', location: 'Palo Alto, CA' },
+    { id: 10, price: '$2,300', description: 'Lorem ipsum dolor sit Palo Alto, CA', location: 'Palo Alto, CA' },
+    { id: 11, price: '$2,300', description: 'Lorem ipsum dolor sit Palo Alto, CA', location: 'Palo Alto, CA' },
+    { id: 12, price: '$2,300', description: 'Lorem ipsum dolor sit Palo Alto, CA', location: 'Palo Alto, CA' },
+    { id: 13, price: '$2,300', description: 'Lorem ipsum dolor sit Palo Alto, CA', location: 'Palo Alto, CA' },
+    { id: 14, price: '$2,300', description: 'Lorem ipsum dolor sit Palo Alto, CA', location: 'Palo Alto, CA' },
+    { id: 15, price: '$2,300', description: 'Lorem ipsum dolor sit Palo Alto, CA', location: 'Palo Alto, CA' }
+  ]
 
   useEffect(() => {
     const getSession = async () => {
@@ -47,42 +88,113 @@ export default function Marketplace() {
   }
 
   return (
-    <main className="p-8 max-w-6xl mx-auto relative">
-      {/* Header */}
-      <header className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">🛍️ My Marketplace</h1>
-        {user && (
-          <div className="flex items-center gap-4">
-            <span className="text-gray-700">Hello, {user.email}</span>
-            <button
-              className="bg-red-500 text-white px-4 py-2 rounded"
-              onClick={handleLogout}
-            >
-              Logout
-            </button>
-          </div>
-        )}
-      </header>
-
-      {/* Products */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <div
-            key={i}
-            className="border rounded-xl shadow-md p-4 flex flex-col items-center"
-          >
-            <div className="w-full h-40 bg-gray-200 rounded mb-4 flex items-center justify-center text-gray-500">
-              Image
+    <div className="min-h-screen bg-gray-50">
+      {/* Top Navigation */}
+      <nav className="bg-white shadow-sm border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center">
+              <div className="flex-shrink-0 flex items-center">
+                <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">M</span>
+                </div>
+                <h1 className="ml-3 text-xl font-bold text-gray-900">Marketplace</h1>
+              </div>
             </div>
-            <h2 className="text-lg font-semibold">Product {i + 1}</h2>
-            <p className="text-sm text-gray-600 mb-2">This is a cool item.</p>
-            <span className="font-bold text-blue-500 mb-2">₱{(i + 1) * 100}</span>
-            <button className="bg-blue-500 text-white px-4 py-1 rounded">
-              Buy Now
-            </button>
+            
+            <div className="flex items-center space-x-4">
+              {user && (
+                <>
+                  <span className="text-gray-700">Hello, {user.email}</span>
+                  <button
+                    className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors"
+                    onClick={handleLogout}
+                  >
+                    Logout
+                  </button>
+                </>
+              )}
+            </div>
           </div>
-        ))}
-      </section>
+        </div>
+      </nav>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="flex gap-6">
+          {/* Sidebar */}
+          <div className="w-64 bg-white rounded-lg shadow-sm p-4">
+            {/* Create New Listing */}
+            <div className="mb-6">
+              <h3 className="font-semibold text-gray-900 mb-3">Create new listing</h3>
+              <div className="space-y-2">
+                <button className="w-full flex items-center text-left p-2 text-gray-600 hover:bg-gray-50 rounded">
+                  <span className="mr-2">📝</span>
+                  Choose listing type
+                </button>
+                <button className="w-full flex items-center text-left p-2 text-gray-600 hover:bg-gray-50 rounded">
+                  <span className="mr-2">📋</span>
+                  Your listings
+                </button>
+                <button className="w-full flex items-center text-left p-2 text-gray-600 hover:bg-gray-50 rounded">
+                  <span className="mr-2">❓</span>
+                  Seller help
+                </button>
+              </div>
+            </div>
+
+            {/* Categories */}
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-3">Categories</h3>
+              <div className="space-y-1">
+                {categories.map((category) => (
+                  <button
+                    key={category.name}
+                    onClick={() => setSelectedCategory(category.name)}
+                    className={`w-full flex items-center text-left p-2 rounded text-sm transition-colors ${
+                      selectedCategory === category.name
+                        ? 'bg-blue-50 text-blue-600 font-medium'
+                        : 'text-gray-600 hover:bg-gray-50'
+                    }`}
+                  >
+                    <span className="mr-2">{category.icon}</span>
+                    {category.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Main Content */}
+          <div className="flex-1">
+            <div className="bg-white rounded-lg shadow-sm p-6">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Today's picks</h2>
+              
+              {/* Products Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                {mockProducts.map((product) => (
+                  <div
+                    key={product.id}
+                    className="bg-white border rounded-lg overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
+                  >
+                    {/* Product Image Placeholder */}
+                    <div className="h-32 bg-gradient-to-br from-blue-100 to-blue-200 relative overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-br from-blue-200 to-blue-300 opacity-50"></div>
+                      <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.1)_25%,rgba(255,255,255,0.1)_50%,transparent_50%,transparent_75%,rgba(255,255,255,0.1)_75%)] bg-[length:20px_20px]"></div>
+                    </div>
+                    
+                    {/* Product Info */}
+                    <div className="p-3">
+                      <div className="font-bold text-lg text-gray-900 mb-1">{product.price}</div>
+                      <div className="text-sm text-gray-600 mb-2">{product.description}</div>
+                      <div className="text-xs text-gray-500">{product.location}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Login Modal */}
       {showModal && (
@@ -91,13 +203,13 @@ export default function Marketplace() {
             <h2 className="text-xl font-bold mb-4">Login Required</h2>
             <input
               type="email"
-              className="border p-2 w-full mb-4"
+              className="border p-2 w-full mb-4 rounded"
               placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
             <button
-              className="bg-blue-500 text-white px-4 py-2 w-full rounded"
+              className="bg-blue-500 text-white px-4 py-2 w-full rounded hover:bg-blue-600 transition-colors"
               onClick={handleLogin}
             >
               Send Magic Link
@@ -106,6 +218,6 @@ export default function Marketplace() {
           </div>
         </div>
       )}
-    </main>
+    </div>
   )
 }
