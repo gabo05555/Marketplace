@@ -154,7 +154,12 @@ export default function Marketplace() {
   }, [])
 
   const handleLogin = async () => {
-    const { error } = await supabase.auth.signInWithOtp({ email })
+    const { error } = await supabase.auth.signInWithOtp({ 
+      email,
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`
+      }
+    })
     if (error) {
       setMessage(error.message)
     } else {
