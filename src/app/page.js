@@ -54,7 +54,7 @@ export default function Marketplace() {
       const { data } = await supabase.auth.getSession()
       const sessionUser = data.session?.user ?? null
       setUser(sessionUser)
-      if (!sessionUser) setShowModal(true)
+      // Don't automatically show modal - let user browse freely
     }
 
     getSession()
@@ -64,8 +64,6 @@ export default function Marketplace() {
       setUser(sessionUser)
       if (sessionUser) {
         setShowModal(false)
-      } else {
-        setShowModal(true)
       }
     })
 
@@ -90,7 +88,7 @@ export default function Marketplace() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Top Navigation */}
-      <nav className="bg-white shadow-sm border-b">
+      <nav className={`bg-white shadow-sm border-b transition-all duration-300 ${showModal ? 'blur-sm' : ''}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
@@ -103,7 +101,7 @@ export default function Marketplace() {
             </div>
             
             <div className="flex items-center space-x-4">
-              {user && (
+              {user ? (
                 <>
                   <span className="text-gray-700">Hello, {user.email}</span>
                   <button
@@ -113,13 +111,20 @@ export default function Marketplace() {
                     Logout
                   </button>
                 </>
+              ) : (
+                <button
+                  onClick={() => setShowModal(true)}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+                >
+                  Sign In
+                </button>
               )}
             </div>
           </div>
         </div>
       </nav>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 transition-all duration-300 ${showModal ? 'blur-sm' : ''}`}>
         <div className="flex gap-6">
           {/* Sidebar */}
           <div className="w-64 bg-white rounded-lg shadow-sm p-4">
@@ -127,15 +132,36 @@ export default function Marketplace() {
             <div className="mb-6">
               <h3 className="font-semibold text-gray-900 mb-3">Create new listing</h3>
               <div className="space-y-2">
-                <button className="w-full flex items-center text-left p-2 text-gray-600 hover:bg-gray-50 rounded">
+                <button 
+                  className={`w-full flex items-center text-left p-2 rounded transition-colors ${
+                    user 
+                      ? 'text-gray-600 hover:bg-gray-50' 
+                      : 'text-gray-600 hover:bg-gray-50'
+                  }`}
+                  onClick={() => !user ? setShowModal(true) : null}
+                >
                   <span className="mr-2">📝</span>
                   Choose listing type
                 </button>
-                <button className="w-full flex items-center text-left p-2 text-gray-600 hover:bg-gray-50 rounded">
+                <button 
+                  className={`w-full flex items-center text-left p-2 rounded transition-colors ${
+                    user 
+                      ? 'text-gray-600 hover:bg-gray-50' 
+                      : 'text-gray-600 hover:bg-gray-50'
+                  }`}
+                  onClick={() => !user ? setShowModal(true) : null}
+                >
                   <span className="mr-2">📋</span>
                   Your listings
                 </button>
-                <button className="w-full flex items-center text-left p-2 text-gray-600 hover:bg-gray-50 rounded">
+                <button 
+                  className={`w-full flex items-center text-left p-2 rounded transition-colors ${
+                    user 
+                      ? 'text-gray-600 hover:bg-gray-50' 
+                      : 'text-gray-600 hover:bg-gray-50'
+                  }`}
+                  onClick={() => !user ? setShowModal(true) : null}
+                >
                   <span className="mr-2">❓</span>
                   Seller help
                 </button>
@@ -198,23 +224,58 @@ export default function Marketplace() {
 
       {/* Login Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-            <h2 className="text-xl font-bold mb-4">Login Required</h2>
-            <input
-              type="email"
-              className="border p-2 w-full mb-4 rounded"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <button
-              className="bg-blue-500 text-white px-4 py-2 w-full rounded hover:bg-blue-600 transition-colors"
-              onClick={handleLogin}
-            >
-              Send Magic Link
-            </button>
-            {message && <p className="text-sm text-gray-600 mt-2">{message}</p>}
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowModal(false)
+            }
+          }}
+        >
+          <div className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md transform transition-all duration-300 ease-out">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">Welcome to Marketplace</h2>
+              <button
+                onClick={() => setShowModal(false)}
+                className="text-gray-400 hover:text-gray-600 text-2xl font-light w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
+              >
+                ×
+              </button>
+            </div>
+            
+            <p className="text-gray-600 mb-6">Sign in to browse and interact with listings</p>
+            
+            <div className="space-y-4">
+              <input
+                type="email"
+                className="border border-gray-300 p-4 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                placeholder="Enter your email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              
+              <button
+                className="bg-blue-600 text-white px-6 py-4 w-full rounded-lg hover:bg-blue-700 transition-colors font-medium text-lg"
+                onClick={handleLogin}
+              >
+                Send Magic Link
+              </button>
+            </div>
+            
+            {message && (
+              <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                <p className="text-sm text-green-700">{message}</p>
+              </div>
+            )}
+            
+            <div className="mt-6 text-center">
+              <button
+                onClick={() => setShowModal(false)}
+                className="text-gray-500 hover:text-gray-700 text-sm underline transition-colors"
+              >
+                Browse as guest (limited features)
+              </button>
+            </div>
           </div>
         </div>
       )}
