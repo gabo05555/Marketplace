@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import supabase from '@/lib/supabaseClient'
 
 export default function Marketplace() {
@@ -7,9 +8,12 @@ export default function Marketplace() {
   const [email, setEmail] = useState('')
   const [message, setMessage] = useState('')
   const [showModal, setShowModal] = useState(false)
-  const [selectedCategory, setSelectedCategory] = useState('Electronics')
+  const [selectedCategory, setSelectedCategory] = useState('All')
+  const [listings, setListings] = useState([])
+  const [loading, setLoading] = useState(true)
 
   const categories = [
+    { name: 'All', icon: '🏪' },
     { name: 'Vehicles', icon: '🚗' },
     { name: 'Property Rentals', icon: '🏠' },
     { name: 'Apparel', icon: '👕' },
@@ -31,23 +35,28 @@ export default function Marketplace() {
     { name: 'Buy and sell groups', icon: '🛒' }
   ]
 
-  const mockProducts = [
-    { id: 1, price: '$99', description: 'Lorem ipsum dolor sit Palo Alto, CA', location: 'Palo Alto, CA' },
-    { id: 2, price: '$2,300', description: 'Lorem ipsum dolor sit Palo Alto, CA', location: 'Palo Alto, CA' },
-    { id: 3, price: '$2,300', description: 'Lorem ipsum dolor sit Palo Alto, CA', location: 'Palo Alto, CA' },
-    { id: 4, price: '$2,300', description: 'Lorem ipsum dolor sit Palo Alto, CA', location: 'Palo Alto, CA' },
-    { id: 5, price: '$2,300', description: 'Lorem ipsum dolor sit Palo Alto, CA', location: 'Palo Alto, CA' },
-    { id: 6, price: '$2,300', description: 'Lorem ipsum dolor sit Palo Alto, CA', location: 'Palo Alto, CA' },
-    { id: 7, price: '$2,300', description: 'Lorem ipsum dolor sit Palo Alto, CA', location: 'Palo Alto, CA' },
-    { id: 8, price: '$2,300', description: 'Lorem ipsum dolor sit Palo Alto, CA', location: 'Palo Alto, CA' },
-    { id: 9, price: '$2,300', description: 'Lorem ipsum dolor sit Palo Alto, CA', location: 'Palo Alto, CA' },
-    { id: 10, price: '$2,300', description: 'Lorem ipsum dolor sit Palo Alto, CA', location: 'Palo Alto, CA' },
-    { id: 11, price: '$2,300', description: 'Lorem ipsum dolor sit Palo Alto, CA', location: 'Palo Alto, CA' },
-    { id: 12, price: '$2,300', description: 'Lorem ipsum dolor sit Palo Alto, CA', location: 'Palo Alto, CA' },
-    { id: 13, price: '$2,300', description: 'Lorem ipsum dolor sit Palo Alto, CA', location: 'Palo Alto, CA' },
-    { id: 14, price: '$2,300', description: 'Lorem ipsum dolor sit Palo Alto, CA', location: 'Palo Alto, CA' },
-    { id: 15, price: '$2,300', description: 'Lorem ipsum dolor sit Palo Alto, CA', location: 'Palo Alto, CA' }
-  ]
+  // Fetch listings from Supabase
+  const fetchListings = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('listings')
+        .select('*')
+        .order('created_at', { ascending: false })
+
+      if (error) throw error
+      setListings(data || [])
+    } catch (error) {
+      console.error('Error fetching listings:', error)
+      setListings([])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Filter listings based on selected category
+  const filteredListings = selectedCategory === 'All' 
+    ? listings 
+    : listings.filter(listing => listing.category === selectedCategory)
 
   useEffect(() => {
     const getSession = async () => {
@@ -58,12 +67,15 @@ export default function Marketplace() {
     }
 
     getSession()
+    fetchListings()
 
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       const sessionUser = session?.user ?? null
       setUser(sessionUser)
       if (sessionUser) {
         setShowModal(false)
+        // Refresh listings when user logs in
+        fetchListings()
       }
     })
 
@@ -133,33 +145,27 @@ export default function Marketplace() {
               <h3 className="font-semibold text-gray-900 mb-3">Create new listing</h3>
               <div className="space-y-2">
                 <button 
-                  className={`w-full flex items-center text-left p-2 rounded transition-colors ${
-                    user 
-                      ? 'text-gray-600 hover:bg-gray-50' 
-                      : 'text-gray-600 hover:bg-gray-50'
-                  }`}
-                  onClick={() => !user ? setShowModal(true) : null}
+                  className="w-full flex items-center text-left p-2 rounded transition-colors text-gray-600 hover:bg-gray-50"
+                  onClick={() => {
+                    if (user) {
+                      window.location.href = '/add-listing'
+                    } else {
+                      setShowModal(true)
+                    }
+                  }}
                 >
                   <span className="mr-2">📝</span>
                   Choose listing type
                 </button>
                 <button 
-                  className={`w-full flex items-center text-left p-2 rounded transition-colors ${
-                    user 
-                      ? 'text-gray-600 hover:bg-gray-50' 
-                      : 'text-gray-600 hover:bg-gray-50'
-                  }`}
+                  className="w-full flex items-center text-left p-2 rounded transition-colors text-gray-600 hover:bg-gray-50"
                   onClick={() => !user ? setShowModal(true) : null}
                 >
                   <span className="mr-2">📋</span>
                   Your listings
                 </button>
                 <button 
-                  className={`w-full flex items-center text-left p-2 rounded transition-colors ${
-                    user 
-                      ? 'text-gray-600 hover:bg-gray-50' 
-                      : 'text-gray-600 hover:bg-gray-50'
-                  }`}
+                  className="w-full flex items-center text-left p-2 rounded transition-colors text-gray-600 hover:bg-gray-50"
                   onClick={() => !user ? setShowModal(true) : null}
                 >
                   <span className="mr-2">❓</span>
@@ -193,30 +199,83 @@ export default function Marketplace() {
           {/* Main Content */}
           <div className="flex-1">
             <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Today's picks</h2>
-              
-              {/* Products Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                {mockProducts.map((product) => (
-                  <div
-                    key={product.id}
-                    className="bg-white border rounded-lg overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
-                  >
-                    {/* Product Image Placeholder */}
-                    <div className="h-32 bg-gradient-to-br from-blue-100 to-blue-200 relative overflow-hidden">
-                      <div className="absolute inset-0 bg-gradient-to-br from-blue-200 to-blue-300 opacity-50"></div>
-                      <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.1)_25%,rgba(255,255,255,0.1)_50%,transparent_50%,transparent_75%,rgba(255,255,255,0.1)_75%)] bg-[length:20px_20px]"></div>
-                    </div>
-                    
-                    {/* Product Info */}
-                    <div className="p-3">
-                      <div className="font-bold text-lg text-gray-900 mb-1">{product.price}</div>
-                      <div className="text-sm text-gray-600 mb-2">{product.description}</div>
-                      <div className="text-xs text-gray-500">{product.location}</div>
-                    </div>
-                  </div>
-                ))}
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">
+                  {selectedCategory === 'All' ? 'All Listings' : `${selectedCategory} Listings`}
+                </h2>
+                <span className="text-gray-500">
+                  {filteredListings.length} {filteredListings.length === 1 ? 'item' : 'items'}
+                </span>
               </div>
+              
+              {loading ? (
+                <div className="flex justify-center items-center py-12">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                </div>
+              ) : filteredListings.length === 0 ? (
+                <div className="text-center py-12">
+                  <div className="text-gray-400 text-6xl mb-4">🛒</div>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">No listings found</h3>
+                  <p className="text-gray-500 mb-6">
+                    {selectedCategory === 'All' 
+                      ? 'Be the first to create a listing!' 
+                      : `No items found in ${selectedCategory}.`}
+                  </p>
+                  {user && (
+                    <button
+                      onClick={() => window.location.href = '/add-listing'}
+                      className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                    >
+                      Create First Listing
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                  {filteredListings.map((listing) => (
+                    <div
+                      key={listing.id}
+                      className="bg-white border rounded-lg overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
+                    >
+                      {/* Product Image */}
+                      <div className="h-32 bg-gradient-to-br from-blue-100 to-blue-200 relative overflow-hidden">
+                        {listing.image_url ? (
+                          <img
+                            src={listing.image_url}
+                            alt={listing.title}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <>
+                            <div className="absolute inset-0 bg-gradient-to-br from-blue-200 to-blue-300 opacity-50"></div>
+                            <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.1)_25%,rgba(255,255,255,0.1)_50%,transparent_50%,transparent_75%,rgba(255,255,255,0.1)_75%)] bg-[length:20px_20px]"></div>
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <span className="text-white text-2xl">📷</span>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                      
+                      {/* Product Info */}
+                      <div className="p-3">
+                        <div className="font-bold text-lg text-gray-900 mb-1">
+                          ${listing.price.toFixed(2)}
+                        </div>
+                        <div className="text-sm text-gray-900 font-medium mb-1 truncate">
+                          {listing.title}
+                        </div>
+                        <div className="text-xs text-gray-600 mb-2 line-clamp-2">
+                          {listing.description}
+                        </div>
+                        <div className="text-xs text-gray-500">{listing.location}</div>
+                        <div className="text-xs text-gray-400 mt-1">
+                          {new Date(listing.created_at).toLocaleDateString()}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
