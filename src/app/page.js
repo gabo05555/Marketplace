@@ -233,29 +233,36 @@ export default function Marketplace() {
           }}
         >
           <div className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md transform transition-all duration-300 ease-out border-2 border-gray-200">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-3xl font-bold text-gray-900">Welcome to Marketplace</h2>
+            <div className="flex justify-between items-start mb-8">
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900 mb-2">Welcome Back</h1>
+                <p className="text-gray-600 text-base">Sign in to your Marketplace account</p>
+              </div>
               <button
                 onClick={() => setShowModal(false)}
-                className="text-gray-600 hover:text-gray-800 text-3xl font-normal w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
+                className="text-gray-400 hover:text-gray-600 text-2xl w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors flex-shrink-0"
               >
                 ×
               </button>
             </div>
             
-            <p className="text-gray-800 mb-6 text-lg font-semibold">Sign in to browse and interact with listings</p>
-            
-            <div className="space-y-4">
-              <input
-                type="email"
-                className="border-2 border-gray-300 p-4 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-gray-900 placeholder-gray-500 text-lg"
-                placeholder="Enter your email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
+            <div className="space-y-6">
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                  Email address
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-gray-900 placeholder-gray-400 text-base"
+                  placeholder="Enter your email address"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
               
               <button
-                className="bg-blue-600 text-white px-6 py-4 w-full rounded-lg hover:bg-blue-700 transition-colors font-bold text-lg shadow-lg"
+                className="w-full bg-blue-600 text-white px-6 py-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all font-semibold text-base shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]"
                 onClick={handleLogin}
               >
                 Send Magic Link
@@ -263,17 +270,17 @@ export default function Marketplace() {
             </div>
             
             {message && (
-              <div className="mt-4 p-4 bg-green-50 border-2 border-green-200 rounded-lg">
-                <p className="text-base text-green-800 font-semibold">{message}</p>
+              <div className="mt-6 p-4 bg-green-50 border-2 border-green-200 rounded-lg">
+                <p className="text-sm text-green-800 font-medium">{message}</p>
               </div>
             )}
             
-            <div className="mt-6 text-center">
+            <div className="mt-8 text-center">
               <button
                 onClick={() => setShowModal(false)}
-                className="text-gray-700 hover:text-gray-900 text-base underline transition-colors font-semibold"
+                className="text-gray-500 hover:text-gray-700 text-sm transition-colors font-medium"
               >
-                Browse as guest (limited features)
+                Continue browsing as guest
               </button>
             </div>
           </div>
