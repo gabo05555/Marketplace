@@ -12,6 +12,7 @@ export default function Marketplace() {
   const [selectedCategory, setSelectedCategory] = useState('All')
   const [listings, setListings] = useState([])
   const [loading, setLoading] = useState(true)
+  const [deleteLoading, setDeleteLoading] = useState(null)
 
   const categories = [
     { name: 'All', icon: '🏪' },
@@ -58,6 +59,36 @@ export default function Marketplace() {
   const filteredListings = selectedCategory === 'All' 
     ? listings 
     : listings.filter(listing => listing.category === selectedCategory)
+
+  // Delete listing function
+  const handleDeleteListing = async (listingId) => {
+    if (!confirm('Are you sure you want to delete this listing?')) {
+      return
+    }
+
+    setDeleteLoading(listingId)
+    try {
+      const { error } = await supabase
+        .from('listings')
+        .delete()
+        .eq('id', listingId)
+        .eq('user_id', user.id) // Extra security check
+
+      if (error) throw error
+
+      // Remove from local state
+      setListings(prev => prev.filter(listing => listing.id !== listingId))
+      
+      // Show success message briefly
+      setMessage('Listing deleted successfully!')
+      setTimeout(() => setMessage(''), 3000)
+    } catch (error) {
+      console.error('Error deleting listing:', error)
+      alert('Error deleting listing. Please try again.')
+    } finally {
+      setDeleteLoading(null)
+    }
+  }
 
   useEffect(() => {
     const getSession = async () => {
@@ -137,6 +168,13 @@ export default function Marketplace() {
         </div>
       </nav>
 
+      {/* Success Message */}
+      {message && (
+        <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 mx-4 mt-4 rounded-lg">
+          <p className="text-sm font-medium">{message}</p>
+        </div>
+      )}
+
       <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 transition-all duration-300 ${showModal ? 'blur-sm' : ''}`}>
         <div className="flex gap-6">
           {/* Sidebar */}
@@ -160,7 +198,13 @@ export default function Marketplace() {
                 </button>
                 <button 
                   className="w-full flex items-center text-left p-2 rounded transition-colors text-gray-600 hover:bg-gray-50"
-                  onClick={() => !user ? setShowModal(true) : null}
+                  onClick={() => {
+                    if (user) {
+                      router.push('/my-listings')
+                    } else {
+                      setShowModal(true)
+                    }
+                  }}
                 >
                   <span className="mr-2">📋</span>
                   Your listings
@@ -236,10 +280,29 @@ export default function Marketplace() {
                   {filteredListings.map((listing) => (
                     <div
                       key={listing.id}
-                      className="bg-white border rounded-lg overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
+                      className="bg-white border rounded-lg overflow-hidden hover:shadow-md transition-shadow relative"
                     >
+                      {/* Delete Button (only for user's own listings) */}
+                      {user && user.id === listing.user_id && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleDeleteListing(listing.id)
+                          }}
+                          disabled={deleteLoading === listing.id}
+                          className="absolute top-2 right-2 z-10 bg-red-500 hover:bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center transition-colors shadow-lg disabled:opacity-50"
+                          title="Delete listing"
+                        >
+                          {deleteLoading === listing.id ? (
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                          ) : (
+                            <span className="text-sm">×</span>
+                          )}
+                        </button>
+                      )}
+
                       {/* Product Image */}
-                      <div className="h-32 bg-gradient-to-br from-blue-100 to-blue-200 relative overflow-hidden">
+                      <div className="h-32 bg-gradient-to-br from-blue-100 to-blue-200 relative overflow-hidden cursor-pointer">
                         {listing.image_url ? (
                           <img
                             src={listing.image_url}
@@ -272,6 +335,12 @@ export default function Marketplace() {
                         <div className="text-xs text-gray-400 mt-1">
                           {new Date(listing.created_at).toLocaleDateString()}
                         </div>
+                        {/* Owner indicator */}
+                        {user && user.id === listing.user_id && (
+                          <div className="text-xs text-blue-600 font-medium mt-2">
+                            Your listing
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))}

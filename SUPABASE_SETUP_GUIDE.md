@@ -173,5 +173,14 @@ You can find these values in your Supabase dashboard under **"Settings"** → **
 - ✅ Automatic timestamp management
 - ✅ Secure data access with RLS policies
 - ✅ Support for images stored as base64 data
+- ✅ Delete functionality with confirmation dialogs
+- ✅ Dedicated "My Listings" page for listing management
+
+## Features Available After Setup:
+- **Browse Listings**: View all listings without signing in
+- **Create Listings**: Add new listings with photos, title, description, price, and category
+- **Delete Listings**: Remove your own listings with confirmation
+- **Manage Listings**: Dedicated page to view and manage your listings
+- **Secure Access**: RLS ensures users can only modify their own data
 
 Once you complete these steps, let me know and I'll fix the add-listing page to work properly with better UI/UX!
