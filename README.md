@@ -148,13 +148,15 @@ marketplace/
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed contribution guidelines.
+
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🐛 Issues
 
-If you encounter any issues, please [create an issue](https://github.com/yourusername/marketplace/issues) on GitHub.
+If you encounter any issues, please [create an issue](https://github.com/gabo05555/Marketplace/issues) on GitHub.
 
 ## 📞 Support
 
