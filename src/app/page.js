@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import supabase from '@/lib/supabaseClient'
 
 export default function Marketplace() {
+  const router = useRouter()
   const [user, setUser] = useState(null)
   const [email, setEmail] = useState('')
   const [message, setMessage] = useState('')
@@ -148,7 +149,7 @@ export default function Marketplace() {
                   className="w-full flex items-center text-left p-2 rounded transition-colors text-gray-600 hover:bg-gray-50"
                   onClick={() => {
                     if (user) {
-                      window.location.href = '/add-listing'
+                      router.push('/add-listing')
                     } else {
                       setShowModal(true)
                     }
@@ -223,7 +224,7 @@ export default function Marketplace() {
                   </p>
                   {user && (
                     <button
-                      onClick={() => window.location.href = '/add-listing'}
+                      onClick={() => router.push('/add-listing')}
                       className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium"
                     >
                       Create First Listing
