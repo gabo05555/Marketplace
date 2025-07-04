@@ -145,6 +145,12 @@ CREATE INDEX IF NOT EXISTS idx_messages_created_at ON messages(created_at DESC);
 -- Enable Row Level Security
 ALTER TABLE messages ENABLE ROW LEVEL SECURITY;
 
+-- Drop existing policies if they exist, then create new ones
+DROP POLICY IF EXISTS "Sellers can view messages for their listings" ON messages;
+DROP POLICY IF EXISTS "Buyers can view their own messages" ON messages;
+DROP POLICY IF EXISTS "Authenticated users can send messages" ON messages;
+DROP POLICY IF EXISTS "Sellers can update read status" ON messages;
+
 -- Add RLS policies
 CREATE POLICY "Sellers can view messages for their listings" ON messages
   FOR SELECT USING (auth.uid() = seller_id);

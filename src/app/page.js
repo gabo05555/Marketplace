@@ -5,7 +5,9 @@ import supabase from '@/lib/supabaseClient'
 import SearchFilter from '@/components/SearchFilter'
 import SearchStats from '@/components/SearchStats'
 import Pagination from '@/components/Pagination'
+import NotificationBadge from '@/components/NotificationBadge'
 import { useEnhancedSearch, usePagination } from '@/hooks/useEnhancedSearch'
+import { useUnreadMessages } from '@/hooks/useUnreadMessages'
 
 export default function Marketplace() {
   const router = useRouter()
@@ -17,6 +19,9 @@ export default function Marketplace() {
   const [listings, setListings] = useState([])
   const [loading, setLoading] = useState(true)
   const [deleteLoading, setDeleteLoading] = useState(null)
+
+  // Unread messages notification
+  const { unreadCount } = useUnreadMessages(user)
 
   // Enhanced search functionality - filter by category first
   const categoryFilteredListings = listings.filter(listing => 
@@ -243,7 +248,7 @@ export default function Marketplace() {
                   Your listings
                 </button>
                 <button 
-                  className="w-full flex items-center text-left p-2 rounded transition-colors text-gray-600 hover:bg-gray-50"
+                  className="w-full flex items-center justify-between text-left p-2 rounded transition-colors text-gray-600 hover:bg-gray-50"
                   onClick={() => {
                     if (user) {
                       router.push('/messages')
@@ -252,8 +257,13 @@ export default function Marketplace() {
                     }
                   }}
                 >
-                  <span className="mr-2">💬</span>
-                  Your messages
+                  <div className="flex items-center">
+                    <span className="mr-2">💬</span>
+                    Your messages
+                  </div>
+                  {user && unreadCount > 0 && (
+                    <NotificationBadge count={unreadCount} className="ml-2" />
+                  )}
                 </button>
                 <button 
                   className="w-full flex items-center text-left p-2 rounded transition-colors text-gray-600 hover:bg-gray-50"

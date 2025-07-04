@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import supabase from '@/lib/supabaseClient'
+import NotificationBadge from '@/components/NotificationBadge'
 
 export default function Messages() {
   const router = useRouter()
@@ -10,6 +11,7 @@ export default function Messages() {
   const [loading, setLoading] = useState(true)
   const [selectedMessage, setSelectedMessage] = useState(null)
   const [showMessageModal, setShowMessageModal] = useState(false)
+  const [markingAsRead, setMarkingAsRead] = useState(new Set())
 
   useEffect(() => {
     const getSessionAndMessages = async () => {
@@ -52,6 +54,8 @@ export default function Messages() {
   }
 
   const markAsRead = async (messageId) => {
+    setMarkingAsRead(prev => new Set(prev).add(messageId))
+    
     try {
       const { error } = await supabase
         .from('messages')
@@ -70,6 +74,12 @@ export default function Messages() {
       )
     } catch (error) {
       console.error('Error marking message as read:', error)
+    } finally {
+      setMarkingAsRead(prev => {
+        const newSet = new Set(prev)
+        newSet.delete(messageId)
+        return newSet
+      })
     }
   }
 
@@ -151,9 +161,7 @@ export default function Messages() {
               <div className="flex items-center space-x-4">
                 <div className="text-sm text-gray-600">
                   {unreadCount > 0 && (
-                    <span className="bg-red-100 text-red-800 px-2 py-1 rounded-full">
-                      {unreadCount} unread
-                    </span>
+                    <NotificationBadge count={unreadCount} className="bg-red-500" />
                   )}
                 </div>
               </div>
